@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Litegram: launcher icon foreground - a lightning bolt inside the 66dp safe zone of an
+     adaptive icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M58.9,30.2L40,58.2L51.9,58.2L47.7,77.8L68,48.4L56.1,48.4L61.7,30.2z" />
+</vector>

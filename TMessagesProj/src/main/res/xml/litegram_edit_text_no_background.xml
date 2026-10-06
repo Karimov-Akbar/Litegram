@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Litegram: lets EditTextEffects apply EditTextNoBackgroundStyle through an AttributeSet,
+     because the EditText(Context, AttributeSet, int, int) constructor needs API 21. -->
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/EditTextNoBackgroundStyle" />

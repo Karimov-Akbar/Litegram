@@ -1,0 +1,133 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.telegram.build-app-plugin'
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+configurations {
+    compile.exclude module: 'support-v4'
+}
+
+configurations.all {
+    exclude group: 'com.google.firebase', module: 'firebase-core'
+    exclude group: 'androidx.recyclerview', module: 'recyclerview'
+}
+
+dependencies {
+    implementation project(':TMessagesProj')
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
+}
+
+// Litegram: signing data and other local settings live in local.properties (never commit it).
+def litegramProps = new Properties()
+def litegramPropsFile = rootProject.file('local.properties')
+if (litegramPropsFile.exists()) {
+    litegramPropsFile.withInputStream { litegramProps.load(it) }
+}
+def litegramProp = { String name, String fallback ->
+    def value = litegramProps.getProperty(name)
+    return value != null && !value.trim().isEmpty() ? value.trim() : fallback
+}
+def litegramAbis = (project.findProperty('litegramAbis') ?: 'armeabi-v7a').toString().split(',').collect { it.trim() }
+
+android {
+    compileSdkVersion 36
+    buildToolsVersion '36.0.0'
+
+    defaultConfig.applicationId = APP_PACKAGE
+
+    lintOptions {
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
+        disable 'BlockedPrivateApi'
+        checkReleaseBuilds false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+
+        coreLibraryDesugaringEnabled true
+    }
+
+    androidResources {
+        noCompress += "pack"
+        localeFilters += ["zz"]
+    }
+
+    signingConfigs {
+        litegram {
+            storeFile rootProject.file(litegramProp('litegram.storeFile', 'TMessagesProj/config/release.keystore'))
+            storePassword litegramProp('litegram.storePassword', RELEASE_STORE_PASSWORD)
+            keyAlias litegramProp('litegram.keyAlias', RELEASE_KEY_ALIAS)
+            keyPassword litegramProp('litegram.keyPassword', RELEASE_KEY_PASSWORD)
+            // Android 4.4 only understands v1 (JAR) signatures.
+            enableV1Signing true
+            enableV2Signing true
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+            signingConfig signingConfigs.litegram
+            applicationIdSuffix ".debug"
+            minifyEnabled false
+            shrinkResources false
+            multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
+        }
+
+        release {
+            debuggable false
+            jniDebuggable false
+            signingConfig signingConfigs.litegram
+            minifyEnabled true
+            shrinkResources true
+            multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro', 'litegram-rules.pro'
+        }
+    }
+
+    sourceSets.debug {
+        manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest.xml'
+    }
+
+    sourceSets.release {
+        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
+    }
+
+    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE) * 10 + 9
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "Litegram-${APP_VERSION_NAME}-${variant.buildType.name}.apk"
+        }
+    }
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 36
+        versionName APP_VERSION_NAME
+        ndkVersion "25.2.9519653"
+
+        multiDexEnabled true
+
+        vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
+
+        ndk {
+            abiFilters(*litegramAbis)
+        }
+
+        buildConfigField "boolean", "BUNDLE", "false"
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+    namespace 'org.telegram.messenger.regular'
+}

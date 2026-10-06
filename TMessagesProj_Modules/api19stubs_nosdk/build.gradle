@@ -1,0 +1,24 @@
+// Litegram: Android 4.4 placeholders that must be compiled WITHOUT android.jar on the classpath:
+// their binary names are those of nested framework classes, which confuses javac when the real
+// outer classes are visible. The few framework types their signatures need come from tiny
+// compile-only fakes (source set "fakesdk"), which are not packaged. See also :Api19Stubs.
+apply plugin: 'java-library'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+    fakesdk {
+        java.srcDir 'fakesdk'
+    }
+}
+
+dependencies {
+    compileOnly sourceSets.fakesdk.output
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:-options']
+}

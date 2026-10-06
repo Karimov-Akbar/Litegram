@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Litegram: launcher icon background (own icon instead of Telegram's logo, as Telegram asks
+     third-party apps). The PNG icons for Android < 8 show the same picture. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#148F84"
+        android:pathData="M0,0h108v108h-108z" />
+    <path
+        android:fillColor="#0E6E66"
+        android:pathData="M0,54L108,67.5L108,108L0,108z" />
+</vector>

@@ -1,0 +1,22 @@
+# Copy this file to local.properties (it is ignored by git) and fill in your values.
+
+# Android SDK with "ndk;25.2.9519653" and "cmake;3.22.1" installed.
+# Windows: sdk.dir=C\:\\Android\\Sdk
+sdk.dir=/path/to/Android/Sdk
+
+# Telegram API credentials from https://my.telegram.org -> API development tools.
+# Empty values fall back to the IDs in the upstream sources, which Telegram does not allow
+# third-party clients to use.
+litegram.apiId=
+litegram.apiHash=
+
+# Release signing key (path relative to the repository root). Empty values use the public dummy
+# key of upstream Telegram (TMessagesProj/config/release.keystore) - fine for testing, but users
+# can only update an installed APK with one signed by the same key. Keep your keystore outside
+# the repository, e.g. create it with:
+#   keytool -genkeypair -v -keystore ../keystore/litegram.jks -alias litegram -keyalg RSA -keysize 2048 -validity 10000
+# and set litegram.storeFile=../keystore/litegram.jks
+litegram.storeFile=
+litegram.storePassword=
+litegram.keyAlias=
+litegram.keyPassword=

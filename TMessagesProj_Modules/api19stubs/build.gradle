@@ -1,0 +1,28 @@
+// Litegram: placeholder classes for framework types that exist only since Android 5.0.
+//
+// App code creates/extends some of these types unconditionally (e.g. anonymous
+// ViewOutlineProvider subclasses), which crashes on Android 4.4 with NoClassDefFoundError.
+// These classes are packaged into the APK: on Android 5.0+ the framework versions always win
+// (the boot class loader is asked first), on Android 4.4 these placeholders are used instead.
+// Calls to the related framework methods are redirected by the Api19BackportTransform.
+apply plugin: 'java-library'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { localProps.load(it) }
+}
+def sdkDir = localProps.getProperty('sdk.dir') ?: System.getenv('ANDROID_HOME') ?: System.getenv('ANDROID_SDK_ROOT')
+
+dependencies {
+    compileOnly files("${sdkDir}/platforms/android-36/android.jar")
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:-options']
+}

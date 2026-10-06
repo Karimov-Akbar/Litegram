@@ -1,0 +1,21 @@
+.idea/
+.gradle/
+.kotlin/
+build/
+obj/
+*.iml
+local.properties
+**/.DS_Store
+TMessagesProj/.cxx/
+TMessagesProj/jniLibs/
+TMessagesProj/jniRes/
+TMessagesProj/afat/
+TMessagesProj_App/afat/
+TMessagesProj/jni/ffmpeg/build_android
+*.apk
+*.aab
+
+# Litegram: signing keys are never committed
+*.jks
+keystore.properties
+!TMessagesProj/config/release.keystore

@@ -1,0 +1,32 @@
+name: Bug report
+description: Something does not work or crashes
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Phone and Android version
+      placeholder: Alcatel One Touch Pixi 3 (4013D), Android 4.4.2
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Litegram version
+      placeholder: 12.10.6
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Steps to reproduce, what you expected and what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: |
+        If possible, the crash log: `adb logcat -d -v time > log.txt` right after the crash
+        (Developer options -> USB debugging). Remove phone numbers and other private data.
+      render: text

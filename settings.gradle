@@ -1,0 +1,43 @@
+// Litegram: only the regular app module is built. The Huawei / HockeyApp /
+// Standalone / Tests variants of upstream Telegram are not needed for the
+// lightweight Android 4.4 build and only slow down Gradle configuration.
+include ':TMessagesProj'
+include ':TMessagesProj_App'
+// Litegram: placeholders for framework classes missing on Android 4.4
+include ':Api19Stubs'
+project(':Api19Stubs').projectDir = file('TMessagesProj_Modules/api19stubs')
+include ':Api19StubsNoSdk'
+project(':Api19StubsNoSdk').projectDir = file('TMessagesProj_Modules/api19stubs_nosdk')
+include ':jlatexmath'
+project(':jlatexmath').projectDir = file('TMessagesProj/lib/jlatexmath/jlatexmath')
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// Litegram: include only the media3 modules the app actually depends on
+// (upstream applies media/core_settings.gradle, which adds ~40 modules).
+gradle.ext.androidxMediaModulePrefix = 'TMessagesProj_Modules:media3:media-'
+def mediaRoot = file('TMessagesProj_Modules/media')
+gradle.ext.androidxMediaSettingsDir = mediaRoot.getCanonicalPath()
+def mediaModules = [
+        'lib-common'        : 'libraries/common',
+        'lib-container'     : 'libraries/container',
+        'lib-database'      : 'libraries/database',
+        'lib-datasource'    : 'libraries/datasource',
+        'lib-decoder'       : 'libraries/decoder',
+        'lib-extractor'     : 'libraries/extractor',
+        'lib-exoplayer'     : 'libraries/exoplayer',
+        'lib-exoplayer-dash': 'libraries/exoplayer_dash',
+        'lib-exoplayer-hls' : 'libraries/exoplayer_hls',
+        'lib-decoder-ffmpeg': 'libraries/decoder_ffmpeg',
+        'lib-session'       : 'libraries/session',
+]
+mediaModules.each { name, dir ->
+    def path = ':' + gradle.ext.androidxMediaModulePrefix + name
+    include path
+    project(path).projectDir = new File(mediaRoot, dir)
+}
