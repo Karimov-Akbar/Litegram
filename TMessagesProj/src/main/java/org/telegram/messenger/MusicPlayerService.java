@@ -408,7 +408,9 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
                 TLRPC.User user = MessagesController.getInstance(UserConfig.selectedAccount).getUser(senderId);
                 if (user != null) {
                     contentTitle = UserObject.getUserName(user);
-                    fullAlbumArt = getAvatarBitmap(user, true, !forBitmap);
+                    // Litegram: Android 4.x shows only the small avatar; decoding the 600 px one on
+                    // the main thread on every playback state change caused ANRs on slow phones
+                    fullAlbumArt = Build.VERSION.SDK_INT >= 21 ? getAvatarBitmap(user, true, !forBitmap) : null;
                     albumArt = getAvatarBitmap(user, false, !forBitmap);
 
                 }
@@ -416,7 +418,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
                 TLRPC.Chat chat = MessagesController.getInstance(UserConfig.selectedAccount).getChat(-senderId);
                 if (chat != null) {
                     contentTitle = chat.title;
-                    fullAlbumArt = getAvatarBitmap(chat, true, !forBitmap);
+                    fullAlbumArt = Build.VERSION.SDK_INT >= 21 ? getAvatarBitmap(chat, true, !forBitmap) : null; // Litegram: see above
                     albumArt = getAvatarBitmap(chat, false, !forBitmap);
                 }
             }

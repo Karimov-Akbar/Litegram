@@ -25,7 +25,8 @@ client.
 
 * **Android 4.4 support** (`minSdk` 19): native code built with NDK r25c, Android 5.0+ API calls
   redirected to compatibility code at build time, code rejected by the Dalvik VM of Android 4.4
-  rewritten, the media player brought back to the code paths for Android 4.4, TLS 1.2 enabled.
+  rewritten, the media player brought back to the code paths for Android 4.4, TLS 1.2 enabled,
+  screens fitted to the status bar, navigation bar and keyboard of Android 4.4.
 * **Lighter**: `armeabi-v7a` only (~36 MB APK); no Firebase, Google Play Billing, Android Auto and
   passkeys; Chromecast, animations and blur effects off by default on Android 4.x and low-end
   devices; a smaller default cache limit on phones with little storage.
@@ -56,7 +57,7 @@ You will need JDK 17 and the Android SDK with platform 36, build-tools 36.0.0,
 
 1. Clone the source code with its submodules:
    ```bash
-   git clone --recursive https://github.com/<your-account>/Litegram.git
+   git clone --recursive https://github.com/Karimov-Akbar/Litegram.git
    ```
 2. Copy `local.properties.example` to `local.properties` and fill it in:
    * `sdk.dir` - path to the Android SDK;

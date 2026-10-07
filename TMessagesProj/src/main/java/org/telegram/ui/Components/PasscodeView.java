@@ -1645,8 +1645,8 @@ public class PasscodeView extends FrameLayout implements NotificationCenter.Noti
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         View rootView = getRootView();
-        int usableViewHeight = rootView.getHeight() - AndroidUtilities.statusBarHeight - AndroidUtilities.getViewInset(rootView);
         getWindowVisibleDisplayFrame(rect);
+        int usableViewHeight = rootView.getHeight() - AndroidUtilities.statusBarHeightForKeyboard(rect) - AndroidUtilities.getViewInset(rootView); // Litegram
         keyboardHeight = usableViewHeight - (rect.bottom - rect.top);
 
         if (SharedConfig.passcodeType == SharedConfig.PASSCODE_TYPE_PASSWORD && (AndroidUtilities.isTablet() || getContext().getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)) {

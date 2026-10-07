@@ -12,7 +12,7 @@ marked with a `Litegram` comment. How it fits together: [PORTING.md](PORTING.md)
 | `gradle.properties` | `APP_PACKAGE=org.litegram.messenger`; heap sizes for an 8 GB build machine; R8 horizontal class merging off (`-Dcom.android.tools.r8.disableHorizontalClassMerging=true`, see PORTING.md) |
 | `gradle/wrapper/gradle-wrapper.properties`, `gradlew.bat` | Gradle 8.13 from the official GitHub mirror with checksum; Windows wrapper script |
 | `buildSrc/.../TelegramBuildAppPlugin.kt` | Registers `Api19BackportFactory` for every variant |
-| `buildSrc/.../Api19BackportTransform.kt` | **New.** Rule table: API 20+ calls -> `org.telegram.messenger.compat.Api19` |
+| `buildSrc/.../Api19BackportTransform.kt` | **New.** Rule table: API 20+ calls -> `org.telegram.messenger.compat.Api19`; `ViewGroup.addView` keeps `LinearLayout` margins before Android 7.0 |
 | `TMessagesProj/build.gradle` | minSdk 19, NDK r25c, CMake `android-19`; MultiDex; no Firebase/Android Auto/credentials; API ID from `local.properties`; `litegramAbis`, `litegramSkipNative`, `litegramNativeLibsDir` properties |
 | `TMessagesProj_App/build.gradle` | minSdk 19; signing key from `local.properties` (v1 + v2); R8 with `litegram-rules.pro`; APK name; no flavors |
 | `TMessagesProj_App/litegram-rules.pro` | **New.** Keeps the placeholder framework classes; `-dontwarn` for removed libraries |
@@ -39,8 +39,10 @@ marked with a `Litegram` comment. How it fits together: [PORTING.md](PORTING.md)
 
 | File | Change |
 |---|---|
-| `messenger/compat/Api19.java` | **New.** Static replacements for API 20+ framework methods and for Java APIs missing in 4.4's libcore (`Locale.toLanguageTag/forLanguageTag`, `URLConnection.getContentLengthLong`, ...), used by the bytecode rules |
-| `messenger/AndroidUtilities.java` | Refresh rate: `getSupportedRefreshRates()` only on API 21+ |
+| `messenger/compat/Api19.java` | **New.** Static replacements for API 20+ framework methods and for Java APIs missing in 4.4's libcore (`Locale.toLanguageTag/forLanguageTag`, `URLConnection.getContentLengthLong`, ...) and `viewGroupAddView`, used by the bytecode rules |
+| `messenger/AndroidUtilities.java` | Refresh rate: `getSupportedRefreshRates()` only on API 21+; `enableEdgeToEdge()` does nothing below API 21; `statusBarHeightForKeyboard()` |
+| `ui/Components/SizeNotifierFrameLayout.java`, `ui/Components/SizeNotifierFrameLayoutPhoto.java`, `ui/ActionBar/ActionBarLayout.java`, `ui/ActionBar/BottomSheet.java`, `ui/Components/ItemOptions.java`, `ui/Components/PasscodeView.java`, `ui/Stories/StoryViewer.java` | Keyboard height formulas use `AndroidUtilities.statusBarHeightForKeyboard()`: below API 21 the status bar counted as an open keyboard |
+| `ui/ActionBar/DrawerLayoutContainer.java` | The window is not laid out under the system bars below API 21 (no window insets there) |
 | `messenger/ApplicationLoader.java` | `MultiDex.install` below API 21; TLS 1.2 (`LegacyTlsSocketFactory`); no FCM |
 | `messenger/LegacyTlsSocketFactory.java` | **New.** Enables TLS 1.1/1.2 for `HttpsURLConnection` on 4.4 |
 | `messenger/pip/PipActivityController.java` | `MediaSession` only on API 21+ |
@@ -53,7 +55,7 @@ marked with a `Litegram` comment. How it fits together: [PORTING.md](PORTING.md)
 | `ui/DialogsActivity.java` | Animated speed icon only on API 21+; passkey hint off |
 | `ui/GroupCallActivity.java` | Screen sharing only on API 21+ |
 | `ui/IntroActivity.java` | Refresh rate below API 21 |
-| `ui/LaunchActivity.java` | `TaskDescription` and the circular theme-switch animation only on API 21+; no App Indexing |
+| `ui/LaunchActivity.java` | `TaskDescription` and the circular theme-switch animation only on API 21+; no App Indexing; no edge-to-edge window below API 21 |
 | `ui/PhotoViewer.java` | Video size alignment without `VideoCapabilities` below API 21; Chromecast check |
 | `org/webrtc/Camera2Enumerator.java` | Camera2 not supported below API 21 |
 | `res/drawable/avd_speed.xml`, `res/drawable/avd_flip.xml` | Static icons for 4.4; the animated vectors moved to `res/drawable-v21/` |
@@ -74,6 +76,7 @@ marked with a `Litegram` comment. How it fits together: [PORTING.md](PORTING.md)
 | `messenger/car/*` | Removed (Android Auto) |
 | `messenger/ContactsController.java`, `res/xml/auth.xml`, `res/xml/sync_contacts.xml`, `res/xml/auth_menu.xml` | Account type `org.litegram.messenger` |
 | `messenger/LiteMode.java` | "Everything off" power saving preset for Android < 5.0 and low-end devices |
+| `messenger/MusicPlayerService.java` | The voice message notification does not decode the 600 px avatar on Android 4.x (main-thread decoding caused ANRs) |
 | `messenger/SharedConfig.java`, `messenger/AutoDeleteMediaTask.java`, `ui/CacheControlActivity.java` | Default cache limit by storage size; 300 MB option |
 | `messenger/chromecast/ChromecastController.java`, `ui/Components/AudioPlayerAlert.java` | Chromecast off below API 21 and on low-end devices |
 | `ui/LoginActivity.java`, `ui/PassportActivity.java` | No Firebase SMS, SMS Retriever hash or Google sign-in (all bound to the official app signature) |

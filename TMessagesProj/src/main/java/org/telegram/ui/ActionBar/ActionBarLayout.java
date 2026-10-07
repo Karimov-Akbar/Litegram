@@ -391,7 +391,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
             View rootView = getRootView();
             getWindowVisibleDisplayFrame(rect);
-            int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+            int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(rect) : 0) - AndroidUtilities.getViewInset(rootView); // Litegram
             isKeyboardVisible = usableViewHeight - (rect.bottom - rect.top) > 0;
             if (waitingForKeyboardCloseRunnable != null && !containerView.isKeyboardVisible && !containerViewBack.isKeyboardVisible) {
                 AndroidUtilities.cancelRunOnUIThread(waitingForKeyboardCloseRunnable);
@@ -3416,7 +3416,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         if (rect.bottom == 0 && rect.top == 0) {
             return 0;
         }
-        int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+        int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(rect) : 0) - AndroidUtilities.getViewInset(rootView); // Litegram
         return Math.max(0, usableViewHeight - (rect.bottom - rect.top));
     }
 

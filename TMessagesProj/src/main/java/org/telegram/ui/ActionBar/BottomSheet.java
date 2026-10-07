@@ -597,7 +597,7 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
             getWindowVisibleDisplayFrame(rect);
             int oldKeyboardHeight = keyboardHeight;
             if (rect.bottom != 0 && rect.top != 0) {
-                int usableViewHeight = (int) (rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight * (1f - hideSystemVerticalInsetsProgress) : 0) - AndroidUtilities.getViewInset(rootView) * (1f - hideSystemVerticalInsetsProgress));
+                int usableViewHeight = (int) (rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(rect) * (1f - hideSystemVerticalInsetsProgress) : 0) - AndroidUtilities.getViewInset(rootView) * (1f - hideSystemVerticalInsetsProgress)); // Litegram
                 keyboardHeight = Math.max(0, usableViewHeight - (rect.bottom - rect.top));
                 if (keyboardHeight < dp(20)) {
                     keyboardHeight = 0;

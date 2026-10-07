@@ -724,7 +724,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
         });
 
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        // Litegram: Android 4.4 has opaque system bars and no window insets, so the window must
+        // stay between them instead of drawing underneath (statusBarHeight is 0 there)
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        }
 
         AndroidUtilities.enableEdgeToEdge(this);
 

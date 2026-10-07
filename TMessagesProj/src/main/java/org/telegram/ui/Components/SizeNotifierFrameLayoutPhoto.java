@@ -56,7 +56,7 @@ public class SizeNotifierFrameLayoutPhoto extends SizeNotifierFrameLayout {
         View rootView = getRootView();
         getWindowVisibleDisplayFrame(rect);
         if (withoutWindow) {
-            int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+            int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(rect) : 0) - AndroidUtilities.getViewInset(rootView); // Litegram
             return usableViewHeight - (rect.bottom - rect.top);
         } else {
             int size = activity.getWindow().getDecorView().getHeight() - AndroidUtilities.getViewInset(rootView) - rootView.getBottom();

@@ -1180,7 +1180,7 @@ public class StoryViewer implements NotificationCenter.NotificationCenterDelegat
                     if (AndroidUtilities.rectTmp2.bottom == 0 && AndroidUtilities.rectTmp2.top == 0) {
                         return 0;
                     }
-                    int usableViewHeight = rootView.getHeight() - (AndroidUtilities.rectTmp2.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+                    int usableViewHeight = rootView.getHeight() - (AndroidUtilities.rectTmp2.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(AndroidUtilities.rectTmp2) : 0) - AndroidUtilities.getViewInset(rootView); // Litegram
                     return Math.max(0, usableViewHeight - (AndroidUtilities.rectTmp2.bottom - AndroidUtilities.rectTmp2.top));
                 }
 

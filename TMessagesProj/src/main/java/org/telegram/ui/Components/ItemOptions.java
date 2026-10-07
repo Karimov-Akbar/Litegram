@@ -1422,7 +1422,7 @@ public class ItemOptions {
             final android.graphics.Rect visible = new android.graphics.Rect();
             final View rootView = container.getRootView();
             container.getWindowVisibleDisplayFrame(visible);
-            final int usableViewHeight = rootView.getHeight() - (visible.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+            final int usableViewHeight = rootView.getHeight() - (visible.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(visible) : 0) - AndroidUtilities.getViewInset(rootView); // Litegram
             keyboardHeight = Math.max(0, usableViewHeight - (visible.bottom - visible.top));
         }
         final int bottomLimit = AndroidUtilities.displaySize.y - AndroidUtilities.navigationBarHeight - keyboardHeight;

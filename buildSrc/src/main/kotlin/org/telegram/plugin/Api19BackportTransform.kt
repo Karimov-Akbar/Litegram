@@ -139,6 +139,14 @@ object Api19BackportRules {
         virtual("android/webkit/CookieManager", "removeSessionCookies", "(Landroid/webkit/ValueCallback;)V", "cookieManagerRemoveSessionCookies"),
         virtual("android/webkit/WebSettings", "setMixedContentMode", "(I)V", "webSettingsSetMixedContentMode"),
 
+        // Not a missing API but a behaviour change: before Android 7.0 a LinearLayout keeps only
+        // the size of MarginLayoutParams (e.g. LayoutHelper.createFrame) given to addView and drops
+        // the margins. The LinearLayout rules come first so that they match without class data.
+        virtual("android/widget/LinearLayout", "addView", "(Landroid/view/View;Landroid/view/ViewGroup\$LayoutParams;)V", "viewGroupAddView"),
+        virtual("android/widget/LinearLayout", "addView", "(Landroid/view/View;ILandroid/view/ViewGroup\$LayoutParams;)V", "viewGroupAddView"),
+        virtual("android/view/ViewGroup", "addView", "(Landroid/view/View;Landroid/view/ViewGroup\$LayoutParams;)V", "viewGroupAddView"),
+        virtual("android/view/ViewGroup", "addView", "(Landroid/view/View;ILandroid/view/ViewGroup\$LayoutParams;)V", "viewGroupAddView"),
+
         // Animators (API 21)
         Rule("android/animation/ValueAnimator", "ofArgb", "([I)Landroid/animation/ValueAnimator;", "valueAnimatorOfArgb", isStatic = true),
         Rule("android/animation/ObjectAnimator", "ofArgb", "(Ljava/lang/Object;Ljava/lang/String;[I)Landroid/animation/ObjectAnimator;", "objectAnimatorOfArgb", isStatic = true),

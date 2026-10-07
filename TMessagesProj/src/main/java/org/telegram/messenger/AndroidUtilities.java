@@ -1462,6 +1462,16 @@ public class AndroidUtilities {
         return resourceId > 0 ? context.getResources().getDimensionPixelSize(resourceId) : 0;
     }
 
+    /**
+     * Litegram: the status bar height for the "root view height - visible frame" keyboard height
+     * formulas. Below API 21 the window is not drawn under the status bar and statusBarHeight is 0
+     * (no window insets), while the visible frame still starts below the status bar - without this
+     * the status bar counted as an always open keyboard.
+     */
+    public static int statusBarHeightForKeyboard(Rect visibleFrame) {
+        return Build.VERSION.SDK_INT >= 21 ? statusBarHeight : visibleFrame.top;
+    }
+
     public static int getThumbForNameOrMime(String name, String mime, boolean media) {
         if (name != null && name.length() != 0) {
             int color = -1;
@@ -6797,6 +6807,7 @@ public class AndroidUtilities {
      */
     public static void enableEdgeToEdge(@NonNull Window window) {
         Objects.requireNonNull(window);
+        if (Build.VERSION.SDK_INT < 21) return; // Litegram: opaque system bars and no insets on 4.4
 
         // This triggers the initialization of the decor view here to prevent the attributes set by
         // this method from getting overwritten by the initialization later.

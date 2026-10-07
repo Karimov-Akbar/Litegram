@@ -1,5 +1,5 @@
-# Builds the release APK (armeabi-v7a). Runs manually ("Run workflow") and for version tags
-# (v*), which also publish a GitHub release.
+# Builds the release APK (armeabi-v7a). Runs manually: Actions -> Build -> Run workflow. Run on a
+# version tag (v*) it also creates a draft GitHub release with the APK.
 #
 # Optional repository secrets (Settings -> Secrets and variables -> Actions):
 #   TELEGRAM_API_ID, TELEGRAM_API_HASH  - your API credentials from https://my.telegram.org
@@ -10,8 +10,6 @@ name: Build
 
 on:
   workflow_dispatch:
-  push:
-    tags: ['v*']
 
 permissions:
   contents: write

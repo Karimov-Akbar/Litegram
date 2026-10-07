@@ -23,6 +23,7 @@ import android.os.PowerManager;
 import android.text.SpannableStringBuilder;
 import android.util.Property;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -32,6 +33,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EdgeEffect;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -187,6 +189,40 @@ public final class Api19 {
             }
         } catch (Throwable ignore) {
         }
+    }
+
+    // endregion
+
+    // region ViewGroup
+
+    /*
+     * Android 7.0+ keeps the margins of MarginLayoutParams that are not LinearLayout.LayoutParams
+     * (LayoutHelper.createFrame(...)) when a child is added to a LinearLayout; older versions keep
+     * only the size. Telegram's layouts rely on the new behaviour, so it is reproduced here.
+     */
+
+    public static void viewGroupAddView(ViewGroup parent, View child, ViewGroup.LayoutParams params) {
+        parent.addView(child, keepLinearLayoutMargins(parent, params));
+    }
+
+    public static void viewGroupAddView(ViewGroup parent, View child, int index, ViewGroup.LayoutParams params) {
+        parent.addView(child, index, keepLinearLayoutMargins(parent, params));
+    }
+
+    public static void viewGroupAddView(LinearLayout parent, View child, ViewGroup.LayoutParams params) {
+        parent.addView(child, keepLinearLayoutMargins(parent, params));
+    }
+
+    public static void viewGroupAddView(LinearLayout parent, View child, int index, ViewGroup.LayoutParams params) {
+        parent.addView(child, index, keepLinearLayoutMargins(parent, params));
+    }
+
+    private static ViewGroup.LayoutParams keepLinearLayoutMargins(ViewGroup parent, ViewGroup.LayoutParams params) {
+        if (SDK < 24 && parent instanceof LinearLayout && params instanceof ViewGroup.MarginLayoutParams
+                && !(params instanceof LinearLayout.LayoutParams)) {
+            return new LinearLayout.LayoutParams((ViewGroup.MarginLayoutParams) params);
+        }
+        return params;
     }
 
     // endregion

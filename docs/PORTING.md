@@ -34,6 +34,12 @@ The helper calls the real method on new Android versions and on old ones:
   `SpannableStringBuilder.append(text, what, flags)`, `ValueAnimator.ofArgb`,
   `Locale.toLanguageTag/forLanguageTag`, `URLConnection.getContentLengthLong`, ...
 
+One rule fixes a behaviour change instead of a missing method: before Android 7.0 a `LinearLayout`
+keeps only the size of `MarginLayoutParams` passed to `addView` (e.g. `LayoutHelper.createFrame`)
+and drops the margins. Upstream code relies on the 7.0+ behaviour in dozens of places, so
+`ViewGroup.addView(View, [int,] LayoutParams)` goes through `Api19.viewGroupAddView`, which
+converts such parameters to `LinearLayout.LayoutParams` with the margins.
+
 To support another method: add a rule to `Api19BackportRules.rules` and a static method with the
 same name to `Api19`. Static methods use `Rule(..., isStatic = true)`.
 
@@ -92,6 +98,15 @@ and `GradientProtectionDrawable` (`PathInterpolatorCompat`), `EditTextEffects` (
 `PhotoViewer`, `DialogsActivity`, `GroupCallActivity`, `ScaleStateListAnimator`,
 `InstantCameraViewBase` (Camera2 only on 5.0+), `org.webrtc.Camera2Enumerator`, static icons
 instead of animated vectors (`res/drawable/avd_*.xml`, originals in `drawable-v21`).
+
+Upstream draws the main window edge-to-edge and takes the status and navigation bar sizes from
+`WindowInsetsCompat`. Android 4.4 has no window insets and cannot make the system bars
+transparent, so the content would end up under an opaque status bar with a zero offset.
+`LaunchActivity`, `DrawerLayoutContainer` and `AndroidUtilities.enableEdgeToEdge()` keep the
+window between the system bars on API < 21, as Telegram did before it dropped Android 4.x. The
+keyboard height formulas ("root view height - status bar - visible frame") use
+`AndroidUtilities.statusBarHeightForKeyboard()`, which is the top of the visible frame there;
+with `statusBarHeight` = 0 the status bar counted as an always open keyboard.
 
 media3 got back the ExoPlayer 2.x code paths for API < 21: `SynchronousMediaCodecAdapter`
 (buffer arrays), `MediaCodecUtil` (`MediaCodecList` before 21), `MediaCodecInfo`,
@@ -153,6 +168,12 @@ Linux/macOS) with the `system-images;android-19;default;armeabi-v7a` image and
 real budget phone (512 MB RAM, 480x854, 240 dpi for a Pixi 3). On a PC with 8 GB of RAM stop
 Gradle before (`gradlew --stop`): when the PC swaps, Android's watchdog restarts the emulated
 system.
+
+Start it with `-prop dalvik.vm.execution-mode=int:fast` (Dalvik JIT off). When Dalvik clears its
+full JIT code cache ("JIT code cache reset" in logcat, a few minutes after Litegram starts), the
+classic engine keeps running stale translations of the erased code and the app dies with
+`SIGSEGV` in `dalvik-jit-code-cache`. Without the JIT the app ran without crashes; real ARM
+phones flush the instruction cache after the reset.
 
 ## Updating to a new Telegram version
 

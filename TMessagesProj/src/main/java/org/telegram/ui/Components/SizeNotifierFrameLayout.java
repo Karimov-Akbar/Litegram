@@ -473,7 +473,7 @@ public class SizeNotifierFrameLayout extends FrameLayout implements Theme.Colora
         if (rect.bottom == 0 && rect.top == 0) {
             return 0;
         }
-        int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+        int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeightForKeyboard(rect) : 0) - AndroidUtilities.getViewInset(rootView); // Litegram
         return keyboardHeight = Math.max(0, usableViewHeight - (rect.bottom - rect.top));
     }
 
